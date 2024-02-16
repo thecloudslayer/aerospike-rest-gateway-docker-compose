@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  aerospike:
+    container_name: aerospike
+    image: aerospike/aerospike-server-enterprise:latest
+    ports:
+      - "3000:3000"
+
+  aerospike_tools:
+    container_name: aerospiketools
+    image: aerospike/aerospike-tools:latest
+    depends_on:
+      - aerospike
+    command: [asadm, -haerospike]
+    stdin_open: true
+
+  aerospike_rest:
+    container_name: aerospike_rest
+    image: aerospike/aerospike-rest-gateway:latest
+    depends_on:
+      - aerospike
+    ports:
+      - "8080:8080"
+    environment:
+      aerospike.restclient.hostname: aerospike
+      aerospike.restclient.port: 3000
